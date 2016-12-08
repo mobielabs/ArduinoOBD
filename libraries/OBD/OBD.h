@@ -19,11 +19,12 @@
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168P__)
 #define OBDUART Serial
 #else
-#define OBDUART Serial1
+#define OBDUART Serial
 #endif
 #endif
 
 // Mode 1 PIDs
+#define PID_MONITOR 0x01
 #define PID_ENGINE_LOAD 0x04
 #define PID_COOLANT_TEMP 0x05
 #define PID_SHORT_TERM_FUEL_TRIM_1 0x06
@@ -140,6 +141,8 @@ public:
 	virtual bool getResult(byte& pid, int& result);
 	// determine if the PID is supported
 	virtual bool isValidPID(byte pid);
+  // determine MIL status
+  virtual bool isMILOn();
 	// init GPS module
 	// parse GPS data
 	// set current PID mode

@@ -88,7 +88,7 @@ byte COBD::readPID(const byte pid[], byte count, int result[])
 	char *p = buffer;
 	byte results = 0;
 	for (byte n = 0; n < count; n++) {
-		p += sprintf(p, "%02X%02X\r", dataMode, pid[n]);		
+		p += sprintf(p, "%02X%02X\r", dataMode, pid[n]);
 	}
 	write(buffer);
 	// receive and parse the response
@@ -116,6 +116,8 @@ int COBD::normalizeData(byte pid, char* data)
 {
 	int result;
 	switch (pid) {
+	case PID_MONITOR:
+	  result = getSmallValue(data) >> 8;
 	case PID_RPM:
 	case PID_EVAP_SYS_VAPOR_PRESSURE: // kPa
 		result = getLargeValue(data) >> 2;
@@ -468,6 +470,17 @@ bool COBD::readGyro(int& x, int& y, int& z)
 	return false;
 }
 
+// read pid 0x01 and determine MIL status
+bool COBD::isMILOn() {
+	int value;
+	readPID(PID_MONITOR, value);
+	if(value > 126) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 #ifdef DEBUG
 void COBD::debugOutput(const char *s)
 {
@@ -542,7 +555,7 @@ byte COBDI2C::receive(char* buffer, byte bufsize, int timeout)
 		if (offset == 0 && c < 0xa) {
 			 // data not ready
 			dataIdleLoop();
-			continue; 
+			continue;
 		}
 		if (buffer) buffer[offset++] = c;
 		for (byte i = 1; i < MAX_PAYLOAD_SIZE && Wire.available(); i++) {
@@ -568,7 +581,7 @@ byte COBDI2C::receive(char* buffer, byte bufsize, int timeout)
 
 byte COBDI2C::readPID(const byte pid[], byte count, int result[])
 {
-	byte results = 0; 
+	byte results = 0;
 	for (byte n = 0; n < count; n++) {
 		if (readPID(pid[n], result[n])) {
 			results++;
