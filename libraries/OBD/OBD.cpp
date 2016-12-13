@@ -470,6 +470,12 @@ bool COBD::readGyro(int& x, int& y, int& z)
 	return false;
 }
 
+void COBD::dataIdleLoop()
+{
+	delay(10);
+}
+
+
 // read pid 0x01 and determine MIL status
 bool COBD::isMILOn() {
 	int value;

@@ -157,7 +157,7 @@ protected:
 	virtual char* getResponse(byte& pid, char* buffer, byte bufsize);
 	virtual byte receive(char* buffer, byte bufsize, int timeout = OBD_TIMEOUT_SHORT);
 	virtual void write(const char* s);
-	virtual void dataIdleLoop() {}
+	virtual void dataIdleLoop();
 	void recover();
 	void debugOutput(const char* s);
 	int normalizeData(byte pid, char* data);
